@@ -15,7 +15,6 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
-
 # region
 api_hash = "9654cd7cc12cb638d8ac16c42c22a5df"
 api_id = 1324314
@@ -45,8 +44,10 @@ async def get_main_page():
         service=service,
         options=options
     )
+
     list_of_hrefs = []
     list_of_text_in_link = []
+
     try:
         driver.get(url)
         a_elems = driver.find_elements(By.CLASS_NAME, 'nb_more')  # получение тегов а с class=nb_more
@@ -68,26 +69,33 @@ async def get_main_page():
     return list_of_text_in_link
 
 
-class From():
+class From:
     dt_not_now = None
+
 
 @dp.message_handler(commands=['get_data'])
 async def send_list(message: types.Message):
-    print(f"{From.dt_not_now} QQQQQ")
     dt = datetime.datetime.now().strftime('%H:%M')
     if From.dt_not_now is not None and dt < From.dt_not_now.strftime('%H:%M'):
         await message.answer(f"Следующее получение данных доступно в: {From.dt_not_now.strftime('%H:%M')}")
 
         From.dt_not_now = None
     else:
-        m = await message.answer("Ожидайте загрузки данных (~10 сек).")
+        m = await message.answer("Ожидайте загрузки данных (~10-20 сек).")
 
         From.dt_not_now = datetime.datetime.now() + relativedelta(hours=+1)
-        print(From.dt_not_now.strftime('%H:%M'))
+
+        dt_now = datetime.datetime.now().strftime("%d.%m.%Y")
+        next_day1 = dt_now + relativedelta(days=+1)
+        next_day2 = dt_now + relativedelta(days=+2)
         list_of_text_in_link = await get_main_page()
+
         for x in list_of_text_in_link:
-            if 'Скоморохова Гора' in x:
+            f_date = str(next_day1) in x and str(next_day2) in x and str(dt_now) in x
+
+            if 'Скоморохова Гора' and f_date in x:
                 await message.answer(x)
+
         await bot.delete_message(chat_id=m.chat.id, message_id=m.message_id)
 
 
