@@ -24,8 +24,6 @@ storage = MemoryStorage()
 bot = Bot(token=bot_token)
 dp = Dispatcher(bot, storage=storage)
 
-list_of_text_in_link = []
-
 
 async def get_main_page():
     headers = {
@@ -75,9 +73,9 @@ class From:
 
 @dp.message_handler(commands=['get_data'])
 async def send_list(message: types.Message):
-    dt = datetime.datetime.now().strftime('%H:%M')
-    if From.dt_not_now is not None and dt < From.dt_not_now.strftime('%H:%M'):
-        await message.answer(f"Следующее получение данных доступно в: {From.dt_not_now.strftime('%H:%M')}")
+    dt = datetime.datetime.now().strftime('%d-%m-%Y %H:%M')
+    if From.dt_not_now is not None and dt < From.dt_not_now.strftime('%d-%m-%Y %H:%M'):
+        await message.answer(f"Следующее получение данных доступно в: {From.dt_not_now.strftime('%d-%m-%Y %H:%M')}")
 
         From.dt_not_now = None
     else:
@@ -85,16 +83,20 @@ async def send_list(message: types.Message):
 
         From.dt_not_now = datetime.datetime.now() + relativedelta(hours=+1)
 
-        dt_now = datetime.datetime.now().strftime("%d.%m.%Y")
+        dt_now = datetime.datetime.now()
         next_day1 = dt_now + relativedelta(days=+1)
         next_day2 = dt_now + relativedelta(days=+2)
         list_of_text_in_link = await get_main_page()
 
         for x in list_of_text_in_link:
-            f_date = str(next_day1) in x and str(next_day2) in x and str(dt_now) in x
+            f_date = str(next_day1.strftime("%d.%m.%Y")) in x and \
+                     str(next_day2.strftime("%d.%m.%Y")) in x and \
+                     str(dt_now.strftime("%d.%m.%Y")) in x
 
-            if 'Скоморохова Гора' and f_date in x:
+            if 'Скоморохова Гора' in x and f_date:
                 await message.answer(x)
+            else:
+                await message.answer('Нет данных о профилактических работах на <<Скоморовой Горе>> на ближайшее 2 дня.')
 
         await bot.delete_message(chat_id=m.chat.id, message_id=m.message_id)
 
