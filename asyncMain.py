@@ -17,6 +17,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 
 # region
 
+
 # endregion
 storage = MemoryStorage()
 bot = Bot(token=bot_token)
@@ -35,7 +36,7 @@ async def get_main_page():
 
     url = 'https://atexplus.net/news/news_category/tehnicheskie-raboty/'
 
-    service = Service('E:\\eldoradoPARSE\\chromedriver\\chromedriver.exe')
+    service = Service('')
     driver = webdriver.Chrome(
         service=service,
         options=options
