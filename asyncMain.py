@@ -16,9 +16,7 @@ from aiogram.dispatcher.filters import Text
 from aiogram.dispatcher.filters.state import State, StatesGroup
 
 # region
-api_hash = "9654cd7cc12cb638d8ac16c42c22a5df"
-api_id = 1324314
-bot_token = "5542870136:AAF4Z4gaguJYT_azy-CAvRWHVOVRdovzTj8"
+
 # endregion
 storage = MemoryStorage()
 bot = Bot(token=bot_token)
